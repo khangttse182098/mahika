@@ -1,0 +1,8 @@
+customtkinter
+pymongo
+python-dotenv
+gradio_client
+pydub 
+requests
+playsound
+gTTS
