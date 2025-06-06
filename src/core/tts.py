@@ -5,7 +5,7 @@ import os
 
 class Tts():
     @staticmethod
-    def playSound(msg, lang):
+    def playSound(msg, lang="vi"):
         tts = gTTS(msg, lang=lang)
         with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as temp_file: 
             temp_file_path = temp_file.name
