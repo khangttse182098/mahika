@@ -27,6 +27,6 @@ class LoginWindow(ctk.CTk):
         password = self.password_entry.get()
         result = self.userService.login(username=username, password=password)
         status = result['status']
-        Tts().playSound(result['message'], "vi")
+        Tts().play_sound(result['message'], "vi")
         if status == 200:
             self.withdraw()
