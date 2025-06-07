@@ -31,6 +31,7 @@ class FileList(ctk.CTk):
         super().__init__(fg_color="#E5E5E5")
         self.title("Trang tài liệu")
         self.tile_list: List[FileTile] = []
+        self.total_file = 10
         self.bind("<Key-l>", lambda event : self.changeHoveredTile(event, is_forward=True))
         self.bind("<Key-h>", lambda event : self.changeHoveredTile(event, is_forward=False))
         self.geometry("1000x500")
@@ -43,7 +44,7 @@ class FileList(ctk.CTk):
         FileTile(self, fg="#0C34FA", is_normal=False).grid(row=0, column=0, padx=10, pady=10)
 
         # loop through
-        for i in range(10):
+        for i in range(self.total_file):
             if col == self.max_col:
                 col = 0 
                 row += 1
@@ -62,7 +63,8 @@ class FileList(ctk.CTk):
         self.tile_list[self.hovered_position].set_hovered()
         match is_forward:
             case True:
-                self.hovered_position += 1
+                self.hovered_position = min(self.hovered_position + 1, self.total_file - 1)
+                print(f"pos: {self.hovered_position}")
             case False:
                 self.hovered_position -= 1 if self.hovered_position > 0 else 0
         hovered_tile = self.tile_list[self.hovered_position]
