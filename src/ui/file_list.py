@@ -62,6 +62,7 @@ class FileList(ctk.CTk):
                 self.hovered_position = max(self.hovered_position - 1, 0)
         hovered_tile = self.file_list[self.hovered_position]
         hovered_tile.set_hovered()
+
         # Play file name
         threading.Thread(target=lambda: Tts.play_sound(hovered_tile.name), daemon=True).start()
     
