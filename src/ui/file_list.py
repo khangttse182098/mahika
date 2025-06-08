@@ -1,6 +1,7 @@
 import threading
 from typing import List
 import customtkinter as ctk
+from src.core.stt import Stt
 
 from src.core.tts import Tts
 class FileTile(ctk.CTkFrame):
@@ -67,6 +68,6 @@ class FileList(ctk.CTk):
                 self.hovered_position -= 1 if self.hovered_position > 0 else 0
         hovered_tile = self.tile_list[self.hovered_position]
         hovered_tile.set_hovered()
-
         # Play file name
         threading.Thread(target=lambda: Tts.play_sound(hovered_tile.name, lang="en"), daemon=True).start()
+

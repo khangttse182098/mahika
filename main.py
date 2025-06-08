@@ -4,6 +4,10 @@ from src.core.tts import Tts
 from src.ui.login import LoginWindow
 from src.utils.system_msg import SysMsg
 from src.ui.file_list import FileList
+from src.core.stt import Stt
+
+def load_stt_model():
+   Stt.load_model()
 
 def play_welcome_sound():
     Tts().play_sound(SysMsg.WELCOME_MSG.value)
@@ -17,6 +21,8 @@ def main():
     # app.mainloop()
 
     app = FileList()
+    # Load the Whisper Model after the app run
+    app.after(0, lambda: threading.Thread(target=load_stt_model, daemon=True).start())
     app.mainloop()
 
 if __name__ == "__main__":
