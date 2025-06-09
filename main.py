@@ -1,9 +1,8 @@
 import threading
 import customtkinter as ctk
 from src.core.tts import Tts
-from src.ui.login import LoginWindow
-from src.utils.system_msg import SysMsg
-from src.ui.file_list import FileList
+from src.ui.app import App
+from src.utils.enums.system_msg import SysMsg
 from src.core.stt import Stt
 from src.core.audio_recorder import AudioRecorder
 
@@ -29,15 +28,14 @@ def main():
     # app.after(0, lambda: threading.Thread(target=play_welcome_sound, daemon=True).start())
     # app.mainloop()
 
-    app = FileList()
-    # Load the Whisper Model after the app run
-    app.after(0, lambda: threading.Thread(target=load_stt_model, daemon=True).start())
-    
-    try:
-        app.mainloop()
-    finally:
-        # Clean up the recorder when the app closes
-        recorder.stop_recording_loop()
+    # app = FileList()
+    # # Load the Whisper Model after the app run
+    # app.after(0, lambda: threading.Thread(target=load_stt_model, daemon=True).start())
+
+    # app = WordList(content="This is a test")
+
+    app = App()
+    app.mainloop()
 
 if __name__ == "__main__":
     main()

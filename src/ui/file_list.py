@@ -7,9 +7,9 @@ from src.core.stt import Stt
 from src.core.tts import Tts
 class FileTile(ctk.CTkFrame):
     def __init__(self, master, fg="#FFFFFF", is_normal=True, name="", is_hovered=False):
+        super().__init__(master, width=100, height=100, fg_color=fg)
         self.is_hovered = is_hovered
         self.name = name
-        super().__init__(master, width=100, height=100, fg_color=fg)
         if is_normal == False:
             plusBtn = ctk.CTkLabel(self, text="+", font=ctk.CTkFont(size=50))
             plusBtn.place(relx=0.5, rely=0.5, anchor="center")
@@ -25,18 +25,17 @@ class FileTile(ctk.CTkFrame):
             self.configure(border_color="#2433BB", border_width=2) 
             self.is_hovered = True
 
-class FileList(ctk.CTk):
-    def __init__(self):
-        super().__init__(fg_color="#E5E5E5")
+class FileList(ctk.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master, fg_color="#E5E5E5", width=1000, height=500)
         self.file_list: List[FileTile] = []
         self.read_folder()
-        self.title("Trang tài liệu")
         self.total_file = len(self.file_list)
-        self.bind("<Key-l>", lambda event : self.changeHoveredTile(event, is_forward=True))
-        self.bind("<Key-h>", lambda event : self.changeHoveredTile(event, is_forward=False))
-        self.geometry("1000x500")
+        self.master.bind_all("<Key-l>", lambda event : self.changeHoveredTile(event, is_forward=True))
+        self.master.bind_all("<Key-h>", lambda event : self.changeHoveredTile(event, is_forward=False))
         self.hovered_position = -1
         self.max_col = 4
+        self.after(100, self.focus_set)
         col = 1
         row = 0 
 
@@ -52,6 +51,7 @@ class FileList(ctk.CTk):
             col += 1  
     
     def changeHoveredTile(self, event, is_forward):
+        print("lmaolmao")
         if self.hovered_position > -1:
             self.file_list[self.hovered_position].set_hovered()
         match is_forward:

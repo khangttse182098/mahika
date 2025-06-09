@@ -1,15 +1,13 @@
-import time
 import customtkinter as ctk
 from src.core.user_service import UserService
 from src.core.tts import Tts
-from src.utils.system_msg import SysMsg
+from src.utils.enums.page_name import PageName
 
-class LoginWindow(ctk.CTk):
-    def __init__(self):
-        super().__init__()
+class LoginWindow(ctk.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master, width=400, height=300)
+        self.app = master
         self.userService = UserService()
-        self.title("Login - English Learning Assistant")
-        self.geometry("400x300") 
         
         # Giao diện đăng nhập
         self.frame = ctk.CTkFrame(self)
@@ -29,4 +27,4 @@ class LoginWindow(ctk.CTk):
         status = result['status']
         Tts().play_sound(result['message'], "vi")
         if status == 200:
-            self.withdraw()
+            self.app.show_page(PageName.FILE_LIST)
