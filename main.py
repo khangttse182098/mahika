@@ -5,6 +5,7 @@ from src.ui.login import LoginWindow
 from src.utils.system_msg import SysMsg
 from src.ui.file_list import FileList
 from src.core.stt import Stt
+from src.core.audio_recorder import AudioRecorder
 
 def load_stt_model():
    Stt.load_model()
@@ -12,9 +13,17 @@ def load_stt_model():
 def play_welcome_sound():
     Tts().play_sound(SysMsg.WELCOME_MSG.value)
 
+def start_audio_recorder():
+    recorder = AudioRecorder()
+    recorder.start_recording_loop()
+    return recorder
+
 def main():
     ctk.set_appearance_mode("dark")
     ctk.set_default_color_theme("blue")
+
+    # Start audio recorder in a separate thread
+    recorder = start_audio_recorder()
 
     # app = LoginWindow()
     # app.after(0, lambda: threading.Thread(target=play_welcome_sound, daemon=True).start())
@@ -23,7 +32,12 @@ def main():
     app = FileList()
     # Load the Whisper Model after the app run
     app.after(0, lambda: threading.Thread(target=load_stt_model, daemon=True).start())
-    app.mainloop()
+    
+    try:
+        app.mainloop()
+    finally:
+        # Clean up the recorder when the app closes
+        recorder.stop_recording_loop()
 
 if __name__ == "__main__":
     main()
