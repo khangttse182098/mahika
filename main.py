@@ -12,17 +12,10 @@ def load_stt_model():
 def play_welcome_sound():
     Tts().play_sound(SysMsg.WELCOME_MSG.value)
 
-def start_audio_recorder():
-    recorder = AudioRecorder()
-    recorder.start_recording_loop()
-    return recorder
 
 def main():
     ctk.set_appearance_mode("dark")
     ctk.set_default_color_theme("blue")
-
-    # Start audio recorder in a separate thread
-    recorder = start_audio_recorder()
 
     # app = LoginWindow()
     # app.after(0, lambda: threading.Thread(target=play_welcome_sound, daemon=True).start())
@@ -33,7 +26,6 @@ def main():
     # app.after(0, lambda: threading.Thread(target=load_stt_model, daemon=True).start())
 
     # app = WordList(content="This is a test")
-
     app = App()
     app.mainloop()
 

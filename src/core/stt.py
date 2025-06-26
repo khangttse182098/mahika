@@ -24,7 +24,7 @@ class Stt:
     @classmethod
     def transcribe(cls, audio_path):
         model = cls.get_model()
-        segments, info = model.transcribe(audio_path, beam_size=5, language='vi')  # Unpack tuple
+        segments, info = model.transcribe(audio_path, beam_size=1, language='vi')  # Unpack tuple
         full_text = ""
         for segment in segments:
             full_text += segment.text + " " 

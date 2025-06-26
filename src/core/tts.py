@@ -27,6 +27,6 @@ class Tts:
             while pygame.mixer.music.get_busy():
                 continue
 
-            os.remove(temp_path)
+            # os.remove(temp_path)
 
         threading.Thread(target=_play, daemon=True).start()

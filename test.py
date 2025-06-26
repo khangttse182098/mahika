@@ -11,13 +11,19 @@
 from src.core.audio_recorder import AudioRecorder
 from src.core.stt import Stt
 import time
+from src.core.gemini import Gemini
+from src.core.tts import Tts
 
 stt = Stt()
 stt.load_model()
 
 while True:
-    record_text = AudioRecorder.get_record_text()
+    record_text = AudioRecorder.get_record_text()                           
     print(record_text)
+    gemini = Gemini()
+    text = gemini.get_response(record_text, "Bạn là 1 trợ lý AI cho người khiếm thị")
+    print(text)
+    Tts.play_sound(text)
     if(record_text == "Tạm dừng"):
         break
     print("--------------------------------")

@@ -9,9 +9,8 @@ class AudioRecorder:
     def get_record_text():
         fs = 44100  
         channels = 1  
-        output_file = "./src/utils/audio/output.wav"
-        
-        print("Hold space to record, release to stop...")
+        output_file = "./src/utils/audio/user_prompt.wav"
+        ("Hold space to record, release to stop...")
         try:
             # Wait for spacebar press
             keyboard.wait("space")
@@ -35,7 +34,5 @@ class AudioRecorder:
             else:
                 print("No recording")
                 return None
-        except KeyboardInterrupt:
-            print("Stopped by user")
         except Exception as e:
             print(f"Error: {e}")
