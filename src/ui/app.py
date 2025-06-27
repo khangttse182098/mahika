@@ -21,8 +21,17 @@ class App(ctk.CTk):
  
     def show_page(self, name: str):
         if self.current_page:
+            # unbind previous page bind key
+            if hasattr(self.current_page, "unbind_keys"):
+                self.current_page.unbind_keys()
             self.current_page.pack_forget()
         
-        page = self.pages[name]
-        page.pack(fill="both", expand=True)
-        self.current_page = page
+        new_page = self.pages[name]
+        new_page.pack(fill="both", expand=True)
+
+        # Bind new page with key if had
+        if hasattr(new_page, "bind_keys"):
+            new_page.bind_keys()
+
+        self.title(name.value)
+        self.current_page = new_page

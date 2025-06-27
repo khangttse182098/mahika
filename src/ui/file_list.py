@@ -5,6 +5,7 @@ import customtkinter as ctk
 from src.core.stt import Stt
 
 from src.core.tts import Tts
+import test
 class FileTile(ctk.CTkFrame):
     def __init__(self, master, fg="#FFFFFF", is_normal=True, name="", is_hovered=False):
         super().__init__(master, width=100, height=100, fg_color=fg)
@@ -28,11 +29,10 @@ class FileTile(ctk.CTkFrame):
 class FileList(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master, fg_color="#E5E5E5", width=1000, height=500)
+        self.app = master
         self.file_list: List[FileTile] = []
         self.read_folder()
         self.total_file = len(self.file_list)
-        self.master.bind_all("<Key-l>", lambda event : self.changeHoveredTile(event, is_forward=True))
-        self.master.bind_all("<Key-h>", lambda event : self.changeHoveredTile(event, is_forward=False))
         self.hovered_position = -1
         self.max_col = 4
         self.after(100, self.focus_set)
@@ -48,23 +48,33 @@ class FileList(ctk.CTkFrame):
                 col = 0 
                 row += 1
             tile.grid(row=row, column=col, padx=10, pady=10)
-            col += 1  
-    
-    def changeHoveredTile(self, event, is_forward):
-        print("lmaolmao")
+            col += 1    
+
+    def change_hovered_tile(self, event, is_forward):
         if self.hovered_position > -1:
             self.file_list[self.hovered_position].set_hovered()
         match is_forward:
             case True:
                 self.hovered_position = min(self.hovered_position + 1, self.total_file - 1)
-                print(f"pos: {self.hovered_position}")
             case False:
                 self.hovered_position = max(self.hovered_position - 1, 0)
         hovered_tile = self.file_list[self.hovered_position]
         hovered_tile.set_hovered()
 
         # Play file name
-        threading.Thread(target=lambda: Tts.play_sound(hovered_tile.name), daemon=True).start()
+        threading.Thread(target=lambda: Tts.play_sound(hovered_tile.name), daemon=True).start() 
+    
+    def navigate_word_list(self, event):
+        file_name = self.file_list[self.hovered_position]
+        full_path = os.path.join("D:/mahika", file_name.name)
+        content: str
+        if os.path.isfile(full_path):
+            try:
+                with open(full_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                    print(f"content: {content}")
+            except Exception as e:
+                print(f"Error reading: {e}") 
     
     def read_folder(self):
         if not os.path.isdir('D:/mahika'):
@@ -73,3 +83,13 @@ class FileList(ctk.CTkFrame):
             for entry in os.listdir('D:/mahika'):
                 file_tile = FileTile(self, name=entry)
                 self.file_list.append(file_tile)
+    
+    def bind_keys(self): 
+        self.master.bind_all("<Key-l>", lambda event : self.change_hovered_tile(event, is_forward=True))
+        self.master.bind_all("<Key-h>", lambda event : self.change_hovered_tile(event, is_forward=False))
+        self.master.bind_all("<Key-j>", lambda event : self.navigate_word_list(event))
+    
+    def unbind_keys(self):
+        self.master.unbind_all("<Key-l>")
+        self.master.unbind_all("<Key-h>")
+        self.master.unbind_all("<Key-j>")
