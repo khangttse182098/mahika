@@ -6,6 +6,8 @@ from src.core.stt import Stt
 
 from src.core.tts import Tts
 import test
+
+from src.utils.enums.page_name import PageName
 class FileTile(ctk.CTkFrame):
     def __init__(self, master, fg="#FFFFFF", is_normal=True, name="", is_hovered=False):
         super().__init__(master, width=100, height=100, fg_color=fg)
@@ -19,9 +21,11 @@ class FileTile(ctk.CTkFrame):
             nameLabel.place(relx=0.5, rely=0.5, anchor="center")
     
     def set_hovered(self):
+        # change to unhovered
         if self.is_hovered:
             self.configure(border_width=0)
             self.is_hovered = False
+        # change to hovered
         else:
             self.configure(border_color="#2433BB", border_width=2) 
             self.is_hovered = True
@@ -72,7 +76,10 @@ class FileList(ctk.CTkFrame):
             try:
                 with open(full_path, 'r', encoding='utf-8') as f:
                     content = f.read()
-                    print(f"content: {content}")
+                    # print(f"content: {content}")
+
+                    # navigate to word list
+                    self.app.show_page(PageName.WORD_LIST, content)
             except Exception as e:
                 print(f"Error reading: {e}") 
     

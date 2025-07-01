@@ -6,11 +6,11 @@ from src.utils.enums.system_msg import SysMsg
 from src.core.stt import Stt
 from src.core.audio_recorder import AudioRecorder
 
-def load_stt_model():
-   Stt.load_model()
+# def load_stt_model():
+#    Stt.load_model()
 
-def play_welcome_sound():
-    Tts().play_sound(SysMsg.WELCOME_MSG.value)
+# def play_welcome_sound():
+#     Tts().play_sound(SysMsg.WELCOME_MSG.value)
 
 
 def main():

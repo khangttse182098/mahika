@@ -15,23 +15,31 @@ class App(ctk.CTk):
             PageName.FILE_LIST: FileList(self),
             PageName.WORD_LIST: WordList(self)
         }
-        self.current_page: ctk.CTkBaseClass  = None
+        self.current_page: ctk.CTkBaseClass = None
 
         self.show_page(PageName.LOGIN)
  
-    def show_page(self, name: str):
+    def show_page(self, name: str, content=""):
         if self.current_page:
             # unbind previous page bind key
             if hasattr(self.current_page, "unbind_keys"):
                 self.current_page.unbind_keys()
+            
+            # hide the current page
             self.current_page.pack_forget()
         
         new_page = self.pages[name]
-        new_page.pack(fill="both", expand=True)
+        
+        # Update content if the page supports it and content is provided
+        if content and hasattr(new_page, "update_content"):
+            new_page.update_content(content)
 
         # Bind new page with key if had
         if hasattr(new_page, "bind_keys"):
             new_page.bind_keys()
+        
+        # show the page to screen
+        new_page.pack(fill="both", expand=True)
 
         self.title(name.value)
         self.current_page = new_page

@@ -15,7 +15,7 @@ class Stt:
             print(f"Loading Whisper Model with model size: {model_size}...")
             cls._model = WhisperModel(model_size, device="cpu", compute_type="int8")
             cls._is_loaded = True
-            print("Loaded Whisper Model Successfuly")
+            print("Loaded Whisper Model Successfully")
     @classmethod
     def get_model(cls):
         if not cls._is_loaded:
