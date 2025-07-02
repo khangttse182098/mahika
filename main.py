@@ -10,8 +10,8 @@ from src.core.dictionary import Dictionary
 # def load_stt_model():
 #    Stt.load_model()
 
-def play_welcome_sound():
-    Tts().play_sound(SysMsg.WELCOME_MSG.value)
+# def play_welcome_sound():
+#     Tts().play_sound(SysMsg.WELCOME_MSG.value)
 
 
 def main():
