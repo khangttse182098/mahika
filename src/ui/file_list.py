@@ -5,7 +5,6 @@ import customtkinter as ctk
 from src.core.stt import Stt
 
 from src.core.tts import Tts
-import test
 class FileTile(ctk.CTkFrame):
     def __init__(self, master, fg="#FFFFFF", is_normal=True, name="", is_hovered=False):
         super().__init__(master, width=100, height=100, fg_color=fg)
