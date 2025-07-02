@@ -5,6 +5,7 @@ from src.ui.app import App
 from src.utils.enums.system_msg import SysMsg
 from src.core.stt import Stt
 from src.core.audio_recorder import AudioRecorder
+from src.core.dictionary import Dictionary
 
 # def load_stt_model():
 #    Stt.load_model()
@@ -27,6 +28,7 @@ def main():
 
     # app = WordList(content="This is a test")
     app = App()
+    Dictionary.viToEn("Cá")
     app.mainloop()
 
 if __name__ == "__main__":
