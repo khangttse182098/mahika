@@ -1,9 +1,12 @@
 import customtkinter as ctk
 import textwrap
 
+from src.utils.enums.page_name import PageName
+
 class WordList(ctk.CTkFrame):
     def __init__(self, master, content="Test phát"):
         super().__init__(master, fg_color="#E5E5E5", width=1000, height=500)
+        self.app = master
         
         # Use CTkTextbox for better text wrapping capabilities
         self.content_textbox = ctk.CTkTextbox(
@@ -28,6 +31,16 @@ class WordList(ctk.CTkFrame):
         self.content_textbox.insert("0.0", content)
         self.content_textbox.configure(state="disabled")  # Make it read-only
     
+    def bind_keys(self): 
+        self.master.bind_all("<Key-l>", lambda event : self.change_choosen_word(event, is_forward=True))
+        self.master.bind_all("<Key-h>", lambda event : self.change_choosen_word(event, is_forward=False))
+        self.master.bind_all("<Key-j>", lambda event : self.navigate_word_detail(event))
+    
+    def unbind_keys(self):
+        self.master.unbind_all("<Key-l>")
+        self.master.unbind_all("<Key-h>")
+        self.master.unbind_all("<Key-j>")
+
     def update_content(self, new_content):
         self.content_textbox.configure(state="normal")  # Enable editing temporarily
         self.content_textbox.delete("0.0", "end")  # Clear existing content
@@ -76,14 +89,6 @@ class WordList(ctk.CTkFrame):
         
         print("choosen word position: ", self.choosen_word_pos)
         print("choosen word: ", self.word_list[self.choosen_word_pos] if self.word_list else "None")
-
-    def bind_keys(self): 
-        self.master.bind_all("<Key-l>", lambda event : self.change_choosen_word(event, is_forward=True))
-        self.master.bind_all("<Key-h>", lambda event : self.change_choosen_word(event, is_forward=False))
-    
-    def unbind_keys(self):
-        self.master.unbind_all("<Key-l>")
-        self.master.unbind_all("<Key-h>")
     
     def setup_text_tags(self):
         # Enable text editing to configure tags
@@ -160,4 +165,6 @@ class WordList(ctk.CTkFrame):
             start_index = pos + 1
         
         self.content_textbox.configure(state="disabled")
-
+    
+    def navigate_word_detail(self, event):
+        self.app.show_page(PageName.WORD_DETAIL, self.word_list[self.choosen_word_pos])

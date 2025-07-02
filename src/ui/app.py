@@ -5,6 +5,7 @@ from src.ui.file_list import FileList
 from src.ui.login import LoginWindow
 from src.ui.word_list import WordList
 from src.utils.enums.page_name import PageName
+from src.ui.word_detail import WordDetail
 
 class App(ctk.CTk):
     def __init__(self):
@@ -13,10 +14,12 @@ class App(ctk.CTk):
         self.pages: Dict[str, ctk.CTkBaseClass] = {
             PageName.LOGIN: LoginWindow(self),
             PageName.FILE_LIST: FileList(self),
-            PageName.WORD_LIST: WordList(self)
+            PageName.WORD_LIST: WordList(self),
+            PageName.WORD_DETAIL: WordDetail(self)
         }
         self.current_page: ctk.CTkBaseClass = None
 
+        # show login as first page
         self.show_page(PageName.LOGIN)
  
     def show_page(self, name: str, content=""):
