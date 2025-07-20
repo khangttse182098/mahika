@@ -1,12 +1,18 @@
 import customtkinter as ctk
 import textwrap
-
+import threading
+import time
+from src.core.tts import Tts
 from src.utils.enums.page_name import PageName
 
 class WordList(ctk.CTkFrame):
     def __init__(self, master, content="Test phát"):
         super().__init__(master, fg_color="#E5E5E5", width=1000, height=500)
         self.app = master
+        
+        # TTS throttling
+        self.last_tts_time = 0
+        self.tts_delay = 0.3  # 300ms delay between TTS calls
         
         # Use CTkTextbox for better text wrapping capabilities
         self.content_textbox = ctk.CTkTextbox(
@@ -40,6 +46,7 @@ class WordList(ctk.CTkFrame):
         self.master.unbind_all("<Key-l>")
         self.master.unbind_all("<Key-h>")
         self.master.unbind_all("<Key-j>")
+        # Global navigation keys are handled by App class, no need to unbind here
 
     def update_content(self, new_content):
         self.content_textbox.configure(state="normal")  # Enable editing temporarily
@@ -86,6 +93,16 @@ class WordList(ctk.CTkFrame):
         
         # Highlight the currently selected word
         self.highlight_word_at_position(self.choosen_word_pos)
+        
+        # Throttled TTS - only play if enough time has passed
+        current_time = time.time()
+        if current_time - self.last_tts_time >= self.tts_delay:
+            if self.word_list and self.choosen_word_pos < len(self.word_list):
+                current_word = self.word_list[self.choosen_word_pos]
+                # Stop current playback first for faster response
+                Tts.stop_current_playback()
+                threading.Thread(target=lambda: Tts.play_sound(current_word, "en"), daemon=True).start()
+                self.last_tts_time = current_time
         
         print("choosen word position: ", self.choosen_word_pos)
         print("choosen word: ", self.word_list[self.choosen_word_pos] if self.word_list else "None")

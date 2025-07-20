@@ -3,10 +3,7 @@ import threading
 from typing import List
 import customtkinter as ctk
 from src.core.stt import Stt
-
 from src.core.tts import Tts
-import test
-
 from src.utils.enums.page_name import PageName
 class FileTile(ctk.CTkFrame):
     def __init__(self, master, fg="#FFFFFF", is_normal=True, name="", is_hovered=False):
@@ -100,3 +97,4 @@ class FileList(ctk.CTkFrame):
         self.master.unbind_all("<Key-l>")
         self.master.unbind_all("<Key-h>")
         self.master.unbind_all("<Key-j>")
+        # Global navigation keys are handled by App class, no need to unbind here
