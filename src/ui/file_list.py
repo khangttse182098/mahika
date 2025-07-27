@@ -76,7 +76,7 @@ class FileList(ctk.CTkFrame):
                     # print(f"content: {content}")
 
                     # navigate to word list
-                    self.app.show_page(PageName.WORD_LIST, content)
+                    self.app.show_page(PageName.WORD_LIST.value, content)
             except Exception as e:
                 print(f"Error reading: {e}") 
     

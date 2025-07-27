@@ -32,7 +32,7 @@ class LoginWindow(ctk.CTkFrame):
         status = result['status']
         Tts().play_sound(result['message'], "vi")
         if status == 200:
-            self.app.show_page(PageName.FILE_LIST)
+            self.app.show_page(PageName.FILE_LIST.value)
     
     def bind_keys(self):
         # No specific keys for login page, but global navigation will be handled by App

@@ -194,4 +194,4 @@ class WordList(ctk.CTkFrame):
         if (self.choosen_word_pos < len(self.word_list) and 
             self.word_list[self.choosen_word_pos] and 
             self.word_list[self.choosen_word_pos].strip()):
-            self.app.show_page(PageName.WORD_DETAIL, self.word_list[self.choosen_word_pos])
+            self.app.show_page(PageName.WORD_DETAIL.value, self.word_list[self.choosen_word_pos])
