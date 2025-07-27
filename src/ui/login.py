@@ -20,6 +20,11 @@ class LoginWindow(ctk.CTkFrame):
         self.login_button = ctk.CTkButton(self.frame, text="Login", command=self.login)
         self.login_button.pack(pady=10)
         
+        # Bind Enter key to login function
+        self.username_entry.bind("<Return>", lambda event: self.login())
+        self.password_entry.bind("<Return>", lambda event: self.login())
+        self.bind("<Return>", lambda event: self.login())
+        
     def login(self):
         username = self.username_entry.get()
         password = self.password_entry.get()

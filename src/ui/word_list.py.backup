@@ -183,9 +183,10 @@ class WordList(ctk.CTkFrame):
             
             start_pos = f"{lines_before + 1}.{char_pos}"
             end_pos = f"{lines_before + 1}.{char_pos + len(word_text)}"
-              # Apply highlight tag
+            
+            # Apply highlight tag
             self.content_textbox.tag_add(tag_name, start_pos, end_pos)
-            start_index = pos + 1
+              start_index = pos + 1
         
         self.content_textbox.configure(state="disabled")
     

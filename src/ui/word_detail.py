@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import threading
+import time
 from src.core.dictionary import Dictionary
 from src.core.tts import Tts
 
@@ -56,29 +57,25 @@ class WordDetail(ctk.CTkFrame):
         
         # Show placeholder if no word is set
         if self.word == "placeholder":
-            self.show_placeholder()
+            Tts.play_sound("Chào mừng bạn quay lại Mahika", "vi")
 
     def update_content(self, new_word):
         if self.word != new_word:  # Only update if word is different
             self.word = new_word
             self.create_layout()  # Rebuild layout
             if self.word and self.word != "placeholder":
-                self.search_meaning()
-                # Stop any current playback for faster response
+                self.search_meaning()                # Stop any current playback for faster response
                 Tts.stop_current_playback()
-                # Play word pronunciation in English when entering word detail page
-                threading.Thread(target=lambda: Tts.play_sound(self.word, "en"), daemon=True).start()
-                # Give a brief instruction after word pronunciation
-                threading.Thread(target=self.delayed_instructions, daemon=True).start()
+                # Automatically read the definition immediately
+                self.auto_read_definition()  # Gọi trực tiếp không qua threading
             else:
                 self.show_placeholder()
     
-    def delayed_instructions(self):
-        """Play instructions after a short delay"""
-        import time
-        time.sleep(2)  # Wait 2 seconds for word pronunciation to finish
-        brief_instruction = "Bạn vừa nghe phát âm tiếng Anh. Nhấn R để nghe định nghĩa, P để nghe lại phát âm, I để nghe hướng dẫn đầy đủ"
-        Tts.play_sound(brief_instruction, "vi")
+    def auto_read_definition(self):
+        """Automatically read the definition immediately"""
+        # No delay - read immediately for fastest response
+        if self.word_content and self.word != "placeholder":
+            self.read_word_definition()
 
     def search_meaning(self):
         content = None
@@ -209,8 +206,6 @@ class WordDetail(ctk.CTkFrame):
         self.master.bind_all("<Down>", lambda event: self.scroll_down())
         # Bind key to read word definition
         self.master.bind_all("<Key-r>", lambda event: self.read_word_definition())
-        # Bind key to read word pronunciation (English)
-        self.master.bind_all("<Key-p>", lambda event: self.read_word_pronunciation())
         # Bind key to read navigation instructions
         self.master.bind_all("<Key-i>", lambda event: self.read_instructions())
         # Bind key to stop current TTS playback
@@ -223,8 +218,7 @@ class WordDetail(ctk.CTkFrame):
         self.master.unbind_all("<Up>")
         self.master.unbind_all("<Down>")
         self.master.unbind_all("<Key-r>")
-        # Unbind new TTS keys
-        self.master.unbind_all("<Key-p>")
+        # Unbind TTS keys
         self.master.unbind_all("<Key-i>")
         self.master.unbind_all("<Key-s>")
     
@@ -244,41 +238,30 @@ class WordDetail(ctk.CTkFrame):
         # Stop current playback first
         Tts.stop_current_playback()
         
-        # Create a complete text from the word content
+        # Create a complete text including everything
         complete_text = self.word_content.get("text", "")
         
-        # Add meanings
+        # Add meanings and examples all in Vietnamese
         for meaning in self.word_content.get("meaningArray", []):
             meaning_type = meaning.get("type", "")
             meaning_text = meaning.get("meaning", "")
             example_text = meaning.get("example", "")
             
             complete_text += f" Loại từ: {meaning_type}. Nghĩa: {meaning_text}."
-            if example_text:
+            
+            # Add example in Vietnamese if available
+            if example_text and example_text != "No example available.":
                 complete_text += f" Ví dụ: {example_text}."
-        
-        # Play the complete definition
-        threading.Thread(target=lambda: Tts.play_sound(complete_text, "vi"), daemon=True).start()
-    
-    def read_word_pronunciation(self):
-        """Read the word pronunciation in English"""
-        if self.word == "placeholder":
-            return
-        
-        # Stop current playback first
-        Tts.stop_current_playback()
-        
-        # Play word pronunciation in English
-        threading.Thread(target=lambda: Tts.play_sound(self.word, "en"), daemon=True).start()
+          # Play everything in Vietnamese immediately (không dùng threading để nhanh hơn)
+        Tts.play_sound(complete_text, "vi")
     
     def read_instructions(self):
         """Read navigation instructions for the word detail page"""
         # Stop current playback first
         Tts.stop_current_playback()
         
-        instructions = """Trang chi tiết từ vựng. 
-        Nhấn R để đọc định nghĩa đầy đủ. 
-        Nhấn P để phát âm từ tiếng Anh. 
+        instructions = """Trang chi tiết từ vựng. Định nghĩa đã được đọc tự động. 
+        Nhấn R để đọc lại định nghĩa đầy đủ. 
         Nhấn J hoặc mũi tên xuống để cuộn xuống. 
         Nhấn K hoặc mũi tên lên để cuộn lên. 
         Nhấn S để dừng giọng đọc. 

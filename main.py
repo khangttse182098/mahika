@@ -28,7 +28,6 @@ def main():
 
     # app = WordList(content="This is a test")
     app = App()
-    Dictionary.viToEn("Cá")
     app.mainloop()
 
 if __name__ == "__main__":
