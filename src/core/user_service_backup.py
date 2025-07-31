@@ -30,19 +30,13 @@ class UserService():
     def login(self, email, password):
         if not self.conn or not self.conn.is_connected():
             return {"status": 500, "message": "Không thể kết nối tới cơ sở dữ liệu"}
-        try:
-            cursor = self.conn.cursor(dictionary=True)
+        try:            cursor = self.conn.cursor(dictionary=True)
             query = "SELECT * FROM users WHERE email = %s"
             cursor.execute(query, (email,))
             user = cursor.fetchone()
             cursor.close()
             
             if user:
-                # Check if user has paid (has_paid = 1)
-                has_paid = user.get("has_paid", 0)
-                if has_paid != 1:
-                    return {"status": 403, "message": "Tài khoản của bạn chưa được kích hoạt. Vui lòng thanh toán để sử dụng dịch vụ."}
-                
                 # Try different possible column names for password
                 stored_password = None
                 if "password_hash" in user:

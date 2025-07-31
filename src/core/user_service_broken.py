@@ -29,8 +29,7 @@ class UserService():
 
     def login(self, email, password):
         if not self.conn or not self.conn.is_connected():
-            return {"status": 500, "message": "Không thể kết nối tới cơ sở dữ liệu"}
-        try:
+            return {"status": 500, "message": "Không thể kết nối tới cơ sở dữ liệu"}        try:
             cursor = self.conn.cursor(dictionary=True)
             query = "SELECT * FROM users WHERE email = %s"
             cursor.execute(query, (email,))

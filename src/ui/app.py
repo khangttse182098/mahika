@@ -7,6 +7,7 @@ from src.ui.word_list import WordList
 from src.utils.enums.page_name import PageName
 from src.ui.word_detail import WordDetail
 from src.core.tts import Tts
+from src.ui.ai_chat import AiChatWindow
 
 class App(ctk.CTk):
     def __init__(self):
@@ -23,9 +24,12 @@ class App(ctk.CTk):
             print("TTS initialized successfully")
         except Exception as e:
             print(f"TTS initialization error: {e}")
-        
-        # Initialize pages with error handling
+          # Initialize pages with error handling
         self.pages: Dict[str, ctk.CTkBaseClass] = {}
+        
+        # AI Chat state management
+        self.ai_chat_window = None
+        self.ai_chat_is_open = False
         
         try:
             print("Creating LoginWindow...")
@@ -171,9 +175,9 @@ class App(ctk.CTk):
         # Bind global navigation keys
         self.bind_global_navigation_keys()
         
-        # show the page to screen
+        # show the page to screen        # show the page to screen
         new_page.pack(fill="both", expand=True)
-
+        
         # Set title safely - this might be causing the issue
         try:
             if name and isinstance(name, str):
@@ -190,17 +194,21 @@ class App(ctk.CTk):
                 self.title("Mahika Dictionary")
             except:
                 pass
-            
+        
         self.current_page = new_page
         self.current_page_name = name
-    
+
     def bind_global_navigation_keys(self):
-        # Unbind existing global navigation keys first to avoid duplicates
-        self.unbind_all("<Shift-Key-H>")
+        # Unbind existing global navigation keys first to avoid duplicates        self.unbind_all("<Shift-Key-H>")
         self.unbind_all("<Shift-Key-L>")
-          # Bind global navigation keys for all pages
+        self.unbind_all("<Alt-space>")
+        
+        # Bind global navigation keys for all pages
         self.bind_all("<Shift-Key-H>", lambda event: self.navigate_back())
         self.bind_all("<Shift-Key-L>", lambda event: self.navigate_forward())
+        
+        # Bind Alt+Space to open AI chat
+        self.bind_all("<Alt-space>", lambda event: self.open_ai_chat())
     
     def navigate_back(self):
         if self.page_history:
@@ -269,3 +277,34 @@ class App(ctk.CTk):
                 "can_go_back": False,
                 "can_go_forward": False
             }
+
+    def open_ai_chat(self):
+        """Toggle AI Chat Assistant window"""
+        try:
+            if self.ai_chat_is_open and self.ai_chat_window:
+                # Close existing AI chat
+                print("Closing AI Chat Assistant...")
+                self.ai_chat_window.close_chat()
+                self.ai_chat_window = None
+                self.ai_chat_is_open = False
+            else:
+                # Open new AI chat
+                print("Opening AI Chat Assistant...")
+                self.ai_chat_window = AiChatWindow(self)
+                self.ai_chat_window.focus_set()
+                self.ai_chat_is_open = True
+                
+                # Bind close event to update state
+                self.ai_chat_window.protocol("WM_DELETE_WINDOW", self.on_ai_chat_close)
+                
+        except Exception as e:
+            print(f"Error toggling AI chat: {e}")
+            self.ai_chat_is_open = False
+            self.ai_chat_window = None
+    
+    def on_ai_chat_close(self):
+        """Handle AI chat window close event"""
+        if self.ai_chat_window:
+            self.ai_chat_window.destroy()
+        self.ai_chat_window = None
+        self.ai_chat_is_open = False
