@@ -35,11 +35,17 @@ class LoginWindow(ctk.CTkFrame):
         password = self.password_entry.get()
         result = self.userService.login(email=email, password=password)
         status = result['status']
-        Tts().play_sound(result['message'], "vi")
+        
         if status == 200:
+            # Show page first before TTS to avoid UI blocking
+            self.app.show_page(PageName.FILE_LIST.value)
             # Load Whisper model in background after successful login
             self.load_whisper_model()
-            self.app.show_page(PageName.FILE_LIST.value)
+            # Play TTS in background thread
+            threading.Thread(target=lambda: Tts().play_sound(result['message'], "vi"), daemon=True).start()
+        else:
+            # For error messages, play TTS immediately (blocking is acceptable for errors)
+            threading.Thread(target=lambda: Tts().play_sound(result['message'], "vi"), daemon=True).start()
     
     def load_whisper_model(self):
         """Load Whisper model in background thread to improve AI chat performance"""

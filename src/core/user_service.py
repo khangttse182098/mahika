@@ -29,6 +29,7 @@ class UserService():
 
     def login(self, email, password):
         if not self.conn or not self.conn.is_connected():
+            print("Cannot connect to database")
             return {"status": 500, "message": "Không thể kết nối tới cơ sở dữ liệu"}
         try:
             cursor = self.conn.cursor(dictionary=True)
@@ -36,7 +37,7 @@ class UserService():
             cursor.execute(query, (email,))
             user = cursor.fetchone()
             cursor.close()
-            
+            print(f"Fetched user: {user}")
             if user:
                 # Check if user has paid (has_paid = 1)
                 has_paid = user.get("has_paid", 0)

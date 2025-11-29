@@ -9,6 +9,7 @@ class WordDetail(ctk.CTkFrame):
         super().__init__(master, fg_color="#E5E5E5", width=1000, height=500)
         
         self.word = word
+        self.app = master  # THÊM: Lưu reference đến App
         self.widgets = []  # To track widgets for updating
         self.content_container = None  # Initialize content container
         self.word_content = None  # Store word content for TTS
@@ -198,9 +199,9 @@ class WordDetail(ctk.CTkFrame):
         threading.Thread(target=lambda: Tts.play_sound(audio_error, "vi"), daemon=True).start()
     
     def bind_keys(self):
-        # Bind scrolling keys for word detail page
-        self.master.bind_all("<Key-k>", lambda event: self.scroll_up())
-        self.master.bind_all("<Key-j>", lambda event: self.scroll_down())
+        # Bind scrolling keys for word detail page (GIỮ NGUYÊN)
+        self.master.bind_all("<Key-k>", lambda event: self.scroll_up())  # k = cuộn lên
+        self.master.bind_all("<Key-j>", lambda event: self.scroll_down())  # j = cuộn xuống
         # Alternative arrow keys
         self.master.bind_all("<Up>", lambda event: self.scroll_up())
         self.master.bind_all("<Down>", lambda event: self.scroll_down())
@@ -210,6 +211,11 @@ class WordDetail(ctk.CTkFrame):
         self.master.bind_all("<Key-i>", lambda event: self.read_instructions())
         # Bind key to stop current TTS playback
         self.master.bind_all("<Key-s>", lambda event: self.stop_tts())
+        
+        # THÊM MỚI: Bind phím THOÁT (không conflict với K)
+        self.master.bind_all("<Shift-Key-K>", lambda event: self.go_back_to_previous_page())  # Shift+K = thoát
+        self.master.bind_all("<Escape>", lambda event: self.go_back_to_previous_page())        # Escape = thoát
+        self.master.bind_all("<BackSpace>", lambda event: self.go_back_to_previous_page())     # Backspace = thoát
     
     def unbind_keys(self):
         # Unbind scrolling keys
@@ -221,6 +227,27 @@ class WordDetail(ctk.CTkFrame):
         # Unbind TTS keys
         self.master.unbind_all("<Key-i>")
         self.master.unbind_all("<Key-s>")
+        # THÊM MỚI: Unbind phím thoát
+        self.master.unbind_all("<Shift-Key-K>")
+        self.master.unbind_all("<Escape>")
+        self.master.unbind_all("<BackSpace>")
+    
+    def go_back_to_previous_page(self):
+        """THÊM MỚI: Thoát khỏi Word Detail và quay về trang trước"""
+        # Stop any current TTS playback
+        Tts.stop_current_playback()
+        
+        # Play confirmation sound
+        threading.Thread(target=lambda: Tts.play_sound("Đang quay lại trang trước", "vi"), daemon=True).start()
+        
+        # Navigate back using app's navigation system
+        if hasattr(self.app, 'navigate_back'):
+            self.app.navigate_back()
+        else:
+            # Fallback: directly show Word List page
+            from src.utils.enums.page_name import PageName
+            if hasattr(self.app, 'show_page'):
+                self.app.show_page(PageName.WORD_LIST.value)
     
     def scroll_up(self):
         if self.content_container:
@@ -252,6 +279,7 @@ class WordDetail(ctk.CTkFrame):
             # Add example in Vietnamese if available
             if example_text and example_text != "No example available.":
                 complete_text += f" Ví dụ: {example_text}."
+
           # Play everything in Vietnamese immediately (không dùng threading để nhanh hơn)
         Tts.play_sound(complete_text, "vi")
     
@@ -260,12 +288,14 @@ class WordDetail(ctk.CTkFrame):
         # Stop current playback first
         Tts.stop_current_playback()
         
+        # CẬP NHẬT: Thêm hướng dẫn thoát
         instructions = """Trang chi tiết từ vựng. Định nghĩa đã được đọc tự động. 
         Nhấn R để đọc lại định nghĩa đầy đủ. 
         Nhấn J hoặc mũi tên xuống để cuộn xuống. 
         Nhấn K hoặc mũi tên lên để cuộn lên. 
         Nhấn S để dừng giọng đọc. 
-        Nhấn Shift H để quay lại trang trước. 
+        Nhấn Shift K, Escape, hoặc Backspace để thoát về trang trước.
+        Nhấn Shift H để quay lại lịch sử trang trước. 
         Nhấn Shift L để tiến tới trang sau."""
         
         threading.Thread(target=lambda: Tts.play_sound(instructions, "vi"), daemon=True).start()
